@@ -1,0 +1,55 @@
+--1º Crear Tabla igual que #cliente añadiendo el campo cargo (varchar(20) y cambiando el nombre del campo id_cliente por id_empleado)
+--DROP TABLE #empleado
+CREATE TABLE #empleado (id_empleado int, 
+					dni varchar(50),
+					nombre varchar(20),
+					cargo varchar(20)
+					)
+--2º Insertar datos de la tabla cliente en la tabla cliente
+insert into #empleado (id_empleado,dni,nombre) select * from #cliente
+
+--3º Borrar el empleado con dni 2876543-A
+
+delete from #empleado where dni='2876543-A'
+--4º Poner a todos los empleados cargo de 'Cajero'
+
+update #empleado set cargo='Cajero'
+--5º Cambiar el cargo del empleado 70234567-J a 'Encargado'
+
+update #empleado set cargo='Encargado' where dni='70234567-J'
+
+--6º Mostrar los contratos de cada cliente
+
+select * from #contrato c inner join #cliente  cli on c.id_cliente=cli.id_cliente 
+
+--7º ¿Cuantos contratos tiene cada cliente?
+
+select cli.nombre ,count(*) as Numero_De_Contratos 
+from #cliente cli 
+	inner join #contrato c on cli.id_cliente=c.id_cliente
+group by cli.nombre
+
+--8º ¿Que contratos están sin asignar a algún cliente?
+
+select * from #contrato con 
+	left join #cliente cli on con.id_cliente=cli.id_cliente 
+	where cli.id_cliente is null
+
+--9º Borrar los contratos sin asignar (No escribir a manos los id)
+
+delete from #contrato where id_contrato in (
+		select id_contrato from #contrato con 
+			left join #cliente cli on con.id_cliente=cli.id_cliente 
+			where cli.id_cliente is null
+		)
+--Borrar tablas y cargar datos de nuevo para cliente y contrato
+--10ª ¿Mostrar los contratos sin cliente asignado y los clientes sin contrato asignado?
+
+select id_contrato,dni from #contrato con 
+	full outer join #cliente cl		
+		on con.id_cliente=cl.id_cliente
+	where con.id_cliente is null or cl.id_cliente is null
+	
+--11º Producto cartesiano de cliente y contrato
+
+select * from #contrato cross join #cliente
