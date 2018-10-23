@@ -5,7 +5,7 @@ CREATE TABLE dbo.cliente(
 	Activo varchar(1) default 'N'
 )
 CREATE TABLE dbo.contrato(
-	ID_CONTRATO INT PRIMARY KEY,
+	ID_CONTRATO BIGINT PRIMARY KEY,
 	ID_CLIENTE INT not null,
 	ID_TIPO_CONTRATO INT not null,
 	Fecha_Alta date not null,
@@ -22,3 +22,31 @@ DROP CONSTRAINT FK__contrato__ID_CLI__473C8FC7;
 ALTER TABLE dbo.contrato
 ADD CONSTRAINT ID_CLIENTE
 FOREIGN KEY (ID_CLIENTE) REFERENCES cliente(ID_CLIENTE);
+
+/* ELIMINAR CLAVE PRINCIPAL */
+ALTER TABLE dbo.contrato
+DROP CONSTRAINT ID_CONTRATO;
+
+/* CAMBIAR TIPO DE DATO DE LA COLUMNA */
+ALTER TABLE DBO.CONTRATO
+ALTER COLUMN ID_CONTRATO BIGINT NOT NULL
+
+/*CREAR CLAVE PRINCIPAL*/
+ALTER TABLE CONTRATO
+ADD CONSTRAINT ID_CONTRATO PRIMARY KEY (ID_CONTRATO);
+
+
+
+INSERTAR DATOS
+
+INSERT INTO [dbo].[cliente] values (1,'Pepe','Madrid','S')
+INSERT INTO [dbo].[cliente] values (2,'Maria','Toledo','S')
+INSERT INTO [dbo].[cliente] values (4,'Jose','Madrid','N');
+INSERT INTO [dbo].[cliente] values (5,'Fernando','Segovia','S');
+INSERT INTO [dbo].[cliente] values (6,'Ana','Madrid','N');
+
+insert into dbo.contrato values (10112021010,1,101,'20/10/2014','22/10/2018')
+insert into dbo.contrato (id_contrato,id_cliente,id_tipo_contrato,fecha_alta) values (10112421010,2,102,'10/01/2000')
+insert into dbo.contrato values (10112021012,4,101,'01/01/1990','30/10/2019')
+insert into dbo.contrato values (10112021014,5,103,'12/05/2018','12/05/2020')
+insert into dbo.contrato values (10112021015,6,102,'01/04/2018','10/08/2018')
