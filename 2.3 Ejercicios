@@ -1,0 +1,5 @@
+--1º Cuantos contratos tiene cada cliente
+--2º Cuantos contratos están obsoletos.
+--3º Cuantos contratos están en activo (cliente activo)
+--4º ¿Hay algún cliente sin contrato?
+--5º ¿Existen contratos sin cliente asignado?
