@@ -30,3 +30,33 @@ select case when importeA.nombre_tienda is null
 	on importeA.id_tienda=importeMMAA.id_tienda
 
 2º Mostrar variación de suma de unidades vendidas por articulo en las fechas 201801 contra 201701
+
+
+with 
+	importeA (id_articulo,nombre_articulo,importe_venta) as (
+	select lka.id_articulo,lka.nombre_articulo,sum(IMPORTE_VENTA) 
+		from [dbo].[FACT_VENTAS] th inner join LKP_ARTICULO lka
+			on lka.id_articulo=th.id_articulo
+		where ID_MES=201801 and lka.id_articulo<>194
+		group by lka.id_articulo,lka.nombre_articulo
+)
+, importeMMAA (id_articulo,nombre_articulo,importe_venta) as(
+	select lka.id_articulo,lka.nombre_articulo,sum(IMPORTE_VENTA) 
+		from [dbo].[FACT_VENTAS] th inner join LKP_ARTICULO lka
+			on lka.id_articulo=th.id_articulo
+		where ID_MES=201701 and lka.id_articulo<>10
+		group by lka.id_articulo,lka.nombre_articulo
+)
+select case when importeA.nombre_articulo is null 
+		then importeMMAA.nombre_articulo 
+		else importeA.nombre_articulo END as Tienda
+,isnull(importeA.importe_venta,0)-isnull(importeMMAA.importe_venta,0) as Variación
+,importeA.importe_venta
+,importeMMAA.importe_venta
+,case when importeA.nombre_articulo is null 
+		then 'Datos 2017' 
+		else case when importeMMAA.nombre_articulo is null 
+			then 'Datos 2018' 
+			else 'Los Dos'END END as Datos
+	from importeA full outer join importeMMAA 
+	on importeA.id_articulo=importeMMAA.id_articulo
