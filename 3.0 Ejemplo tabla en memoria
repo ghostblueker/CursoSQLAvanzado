@@ -1,0 +1,26 @@
+with 
+	importeA (id_tienda,nombre_tienda,importe_venta) as (
+	select lkt.id_tienda,lkt.NOMBRE_TIENDA,sum(IMPORTE_VENTA) 
+		from [dbo].[FACT_VENTAS] th inner join LKP_TIENDAS lkt
+			on lkt.ID_TIENDA=th.ID_TIENDA
+		where ID_MES=201801 and lkt.id_tienda<>194
+		group by lkt.id_tienda,lkt.NOMBRE_TIENDA
+)
+, importeMMAA (id_tienda,nombre_tienda,importe_venta) as(
+	select lkt.id_tienda,lkt.NOMBRE_TIENDA,sum(IMPORTE_VENTA) 
+		from [dbo].[FACT_VENTAS] th inner join LKP_TIENDAS lkt
+			on lkt.ID_TIENDA=th.ID_TIENDA
+		where ID_MES=201701 and lkt.id_tienda<>10
+		group by lkt.id_tienda,lkt.NOMBRE_TIENDA
+)
+select case when importeA.nombre_tienda is null 
+		then importeMMAA.nombre_tienda 
+		else importeA.nombre_tienda END as Tienda
+,isnull(importeA.importe_venta,0)-importeMMAA.importe_venta
+,importeA.importe_venta
+,importeMMAA.importe_venta
+	from importeA full outer join importeMMAA 
+	on importeA.id_tienda=importeMMAA.id_tienda
+
+
+
