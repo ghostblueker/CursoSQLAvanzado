@@ -1,3 +1,5 @@
+--º1 Margen de importe 201701 y 201801 eliminando una tienda distinta de cada período y mostrando datos en todas las tiendas e indicando si no tiene datos en algún período
+
 with 
 	importeA (id_tienda,nombre_tienda,importe_venta) as (
 	select lkt.id_tienda,lkt.NOMBRE_TIENDA,sum(IMPORTE_VENTA) 
@@ -16,11 +18,15 @@ with
 select case when importeA.nombre_tienda is null 
 		then importeMMAA.nombre_tienda 
 		else importeA.nombre_tienda END as Tienda
-,isnull(importeA.importe_venta,0)-importeMMAA.importe_venta
+,isnull(importeA.importe_venta,0)-isnull(importeMMAA.importe_venta,0) as Variación
 ,importeA.importe_venta
 ,importeMMAA.importe_venta
+,case when importeA.nombre_tienda is null 
+		then 'Datos 2017' 
+		else case when importeMMAA.nombre_tienda is null 
+			then 'Datos 2018' 
+			else 'Los Dos'END END as Datos
 	from importeA full outer join importeMMAA 
 	on importeA.id_tienda=importeMMAA.id_tienda
 
-
-
+2º Mostrar variación de suma de unidades vendidas por articulo en las fechas 201801 contra 201701
