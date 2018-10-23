@@ -1,0 +1,13 @@
+CREATE TABLE EJEMPLO(
+	ID_PRUEBA INT NOT NULL,            -- No permite nulos
+	POR_DEFECTO INT DEFAULT 0,         -- Por defecto 0
+	VALOR_UNICO INT UNIQUE,            -- Valores únicos
+	AUTOINCREMENTAL INT IDENTITY(1,1), -- Autoincremental
+	PRIMARY KEY(ID_PRUEBA)             -- Clave principal
+);
+CREATE TABLE EJEMPLO2(
+	ID_PRUEBA2 INT PRIMARY KEY,        --Clave principal
+	ID_PRUEBA INT,
+	DESCRIPCION VARCHAR(20),
+	FOREIGN KEY (ID_PRUEBA) REFERENCES EJEMPLO(ID_PRUEBA) --Clave foranea
+)
