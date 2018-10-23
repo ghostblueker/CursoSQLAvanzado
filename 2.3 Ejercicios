@@ -1,5 +1,22 @@
 --1º Cuantos contratos tiene cada cliente
+
+  select cli.nombre,count(*) as NumeroDeContratos from cliente cli 
+	inner join contrato con
+	on cli.id_cliente=con.id_cliente
+	group by cli.nombre
+
 --2º Cuantos contratos están obsoletos.
 --3º Cuantos contratos están en activo (cliente activo)
 --4º ¿Hay algún cliente sin contrato?
+
+  select cli.nombre from cliente cli 
+	left join contrato con
+	on cli.id_cliente=con.id_cliente
+	where con.id_cliente is null
+  
 --5º ¿Existen contratos sin cliente asignado?
+
+  select cli.nombre from cliente cli 
+	right join contrato con
+	on cli.id_cliente=con.id_cliente
+	where cli.id_cliente is null
