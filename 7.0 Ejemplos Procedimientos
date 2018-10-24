@@ -89,3 +89,7 @@ DECLARE @rt int
 
 exec @rt=dbo.NumeroClientesProvincia 'Madrid'
 print @rt
+
+--6º Crear un procedimiento que verifique si un cliente existe (Con RETURN)
+--7º Crear un procedimiento para crear un contrato pero que antes verifique 
+--   si existe el cliente asignado
