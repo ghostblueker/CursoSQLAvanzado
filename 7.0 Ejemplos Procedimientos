@@ -154,3 +154,28 @@ BEGIN
   (select id_cliente from dbo.cliente cli left join dbo.contrato con on cli.id_cliente=con.id_cliente
   where cli.activo='N' and( con.fecha_caducidad>sysdatetime() or con.fecha_caducidad is null))
 END
+
+--9º Hacer un clon de la tabla de ventas con sus datos
+select * into dbo.clon_ventas from fact_ventas where id_mes=201801
+
+--10 Usar un bucle while para aumentar el numero de unidades hasta superar la media de 
+-- la fecha 201801 en 2 más
+select avg(unidades) from clon_ventas
+
+
+WHILE (select avg(unidades) from clon_ventas)<@parUnidades
+	UPDATE clon_ventas SET UNIDADES=UNIDADES+1
+  CONTINUE
+
+--11º Recorrer fila a fila la tabla de cliente
+DECLARE Cliente_Cursor CURSOR FOR  
+SELECT id_cliente, nombre   
+FROM dbo.cliente;  
+OPEN Cliente_Cursor;  
+FETCH NEXT FROM Cliente_Cursor;  
+WHILE @@FETCH_STATUS = 0  
+   BEGIN  
+      FETCH NEXT FROM Cliente_Cursor;  
+   END;  
+CLOSE Cliente_Cursor;  
+DEALLOCATE Cliente_Cursor;  
