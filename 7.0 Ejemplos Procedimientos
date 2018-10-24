@@ -1,0 +1,91 @@
+--1º Crear un procedimiento que le pasemos un variable (@provincia) 
+--   y nos devuelva el listado de clientes filtrado por la provincia indicada
+CREATE PROCEDURE dbo.ListarClientes @provincia varchar(20)
+AS
+BEGIN
+	SELECT *
+	FROM [carrefour].[dbo].[cliente]
+	Where Provincia=@provincia
+END
+
+ListarClientes Madrid;
+
+--2º Crear un procedimiento que le pasemos un variable (@nombre) 
+--   y nos devuelva la provincia output
+
+
+CREATE PROCEDURE dbo.DevolverProvincia @nombre varchar(20),@provincia varchar(20) OUTPUT
+AS
+BEGIN
+	SELECT @provincia=provincia
+	FROM [carrefour].[dbo].[cliente]
+	Where nombre=@nombre
+END
+
+
+
+Declare 
+@provincia varchar(20)
+
+EXECUTE dbo.DevolverProvincia 'Pepe', @provincia OUTPUT
+
+SELECT @provincia
+
+
+--3º Crear procedimiento que inserte datos en la tabla de cliente usando try cath, 
+--pasandole los datos a insertar como variables/parámetros
+
+CREATE PROCEDURE dbo.InsertarNuevoCliente @id_cliente int, @nombre varchar(20),@provincia varchar(20)
+AS
+BEGIN
+BEGIN TRY
+BEGIN TRAN
+	insert into dbo.cliente (id_cliente,nombre,provincia) values
+	(@id_cliente,@nombre,@provincia)
+COMMIT
+END TRY
+BEGIN CATCH
+	print error_message()
+END CATCH
+END
+
+dbo.InsertarNuevoCliente 2,'Pepe','Madrid'
+
+--4º Crear un procedimiento que nos devuelva 1 o 0 en función de si
+-- la provincia que le pasamos por parámetro aparece dos o más veces 
+-- en la tabla de cliente
+
+CREATE PROCEDURE dbo.CLientesProvinciaMayor2 @provincia varchar(20) 
+AS
+BEGIN
+	IF(SELECT COUNT(*)
+		FROM [carrefour].[dbo].[cliente]
+		WHERE PROVINCIA=@PROVINCIA)>1
+	BEGIN
+		RETURN 1
+	END
+	ELSE
+		RETURN 0
+END
+
+DECLARE @rt int
+
+exec @rt=dbo.CLientesProvinciaMayor2 'Madrid'
+print @rt
+
+--5º Crear un procedimiento que devuelva el numero de clientes de la
+--  la provincia indicada como parámetro
+
+CREATE PROCEDURE dbo.NumeroClientesProvincia @provincia varchar(20) 
+AS
+BEGIN
+	RETURN (SELECT COUNT(*)
+		FROM [carrefour].[dbo].[cliente]
+		WHERE PROVINCIA=@PROVINCIA)
+
+END
+
+DECLARE @rt int
+
+exec @rt=dbo.NumeroClientesProvincia 'Madrid'
+print @rt
