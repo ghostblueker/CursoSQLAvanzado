@@ -91,5 +91,66 @@ exec @rt=dbo.NumeroClientesProvincia 'Madrid'
 print @rt
 
 --6º Crear un procedimiento que verifique si un cliente existe (Con RETURN)
+
+
+
+select count(*) from dbo.cliente where nombre='Pepe'
+
+ALTER PROCEDURE dbo.ExisteCliente @id_cliente int 
+AS
+BEGIN
+IF(SELECT COUNT(*)from dbo.cliente where id_cliente=@id_cliente)>0
+	BEGIN
+		RETURN 1
+	END
+	ELSE
+		RETURN 0
+END
+
+DECLARE @rt int
+
+exec @rt=dbo.ExisteCliente 1
+print @rt
+
+
 --7º Crear un procedimiento para crear un contrato pero que antes verifique 
---   si existe el cliente asignado
+--   si existe el cliente asignado (id_cliente) y mostrar el nombre del cliente
+--   cuando se haya insertado su contraro, sino mostrar mensaje de que no existe cliente
+
+ALTER PROCEDURE dbo.InsertarContratoConControlCliente @id_cliente int 
+AS
+BEGIN
+DECLARE @rt int
+DECLARE @nombre varchar(20)
+exec @rt=dbo.ExisteCliente @id_cliente
+IF(@rt)>0
+	BEGIN
+		set @nombre=(select nombre from cliente where id_cliente=@id_cliente)
+		--insert into dbo.contrato (id_contrato,id_cliente,id_tipo_contrato,Fecha_Alta)
+		--values(999178922,@id_cliente,12312,'2018-01-01')
+		PRINT 'Contrato creado al usuario: ' + @nombre
+	END
+	ELSE
+		PRINT 'No existe ese usuario'
+END
+
+DECLARE @rt int
+
+dbo.InsertarContratoConControlCliente 1
+
+
+
+--8º Actualizar la columna activo de la tabla cliente a S.  
+  -- Crear un procedimiento que verifique si el cliente no tiene contrato o su 
+  -- contrato esta caducado y que el procedimiento cambie la columna activo a N
+
+CREATE PROCEDURE dbo.ControlUsuariosActivos
+AS
+BEGIN
+	UPDATE DBO.CLIENTE SET ACTIVO='N' WHERE ID_CLIENTE IN 
+  (select id_cliente from dbo.cliente cli left join dbo.contrato con on cli.id_cliente=con.id_cliente
+  where con.id_cliente is null or con.fecha_caducidad<sysdatetime())
+	UPDATE DBO.CLIENTE SET ACTIVO='S' WHERE ID_CLIENTE IN 
+  (select id_cliente from dbo.cliente cli left join dbo.contrato con on cli.id_cliente=con.id_cliente
+  where cli.activo='N' and( con.fecha_caducidad>sysdatetime() or con.fecha_caducidad is null))
+END
