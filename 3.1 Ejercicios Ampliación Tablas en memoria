@@ -18,3 +18,7 @@ union
 select 'VENTAS',sum(importe_venta) 
 	from FACT_VENTAS where ID_MES=201801
 --3º Mostrar unidades en almacen (resultado de compras-ventas) del año 2018
+--4º Ingresos por mes y tienda del año 2018 (diferencia compra-venta)
+--5º Si tenemos en cuenta que cada tienda tiene unos gastos mensuales de 2400€
+-- cual es la tienda que más pérdidas tiene en el año 2018
+--6º En que año y mes hemos obtenido más beneficios
