@@ -1,0 +1,19 @@
+1º Crear una tabla que se llame contrato con los siguientes campos y datos:
+
+Id_Contrato	Id_Cliente	Tipo_Contrato	Fecha Alta	Fecha Caducidad
+int	int	int	date	date
+10112021010	1	101	20/10/2014	22/10/2018
+10112421010	2	102	10/01/2000	
+10112021012	4	101	01/01/1990	30/10/2019
+10112021014	5	103	12/05/2018	12/05/2020
+10112021015	6	102	01/04/2018	10/08/2018
+
+2º Crear una tabla que se llame cliente con los siguientes valores
+
+Id_Cliente	Nombre	Provincia	Activo
+int	Varchar(20)	Varchar(20)	Varchar(1)
+1	Pepe	Madrid	S
+2	Maria	Toledo	S
+4	Jose	Madrid	N
+5	Fernando	Segovia	S
+6	Ana	Madrid	N
