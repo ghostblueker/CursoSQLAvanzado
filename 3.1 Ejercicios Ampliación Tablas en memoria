@@ -1,0 +1,20 @@
+/*1º Crear Tabla de Compras usando como referencia fact_ventas ******/
+select * into dbo.CARREFOUR_COMPRAS 
+	from (
+	SELECT [ID_MES]
+      ,[ID_TIENDA]
+      ,[ID_SOCIO]
+      ,[ID_ARTICULO]
+      ,ROUND(sum([UNIDADES]) * (rand()+1),0) as UNIDADES
+      ,ROUND(sum([IMPORTE_VENTA]) * rand(),2) as importe_compra
+	FROM [carrefour].[dbo].[FACT_VENTAS]
+	GROUP BY ID_MES,ID_TIENDA,ID_SOCIO,ID_ARTICULO
+	) as v
+
+--2º Mostrar compras y ventas totales para 201801 (UNION -- WITH)
+select 'COMPRAS' AS TIPO ,sum(importe_compra) AS IMPORTE
+	from CARREFOUR_COMPRAS where ID_MES=201801
+union 
+select 'VENTAS',sum(importe_venta) 
+	from FACT_VENTAS where ID_MES=201801
+--3º Mostrar unidades en almacen (resultado de compras-ventas) del año 2018
