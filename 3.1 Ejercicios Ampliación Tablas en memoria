@@ -17,8 +17,72 @@ select 'COMPRAS' AS TIPO ,sum(importe_compra) AS IMPORTE
 union 
 select 'VENTAS',sum(importe_venta) 
 	from FACT_VENTAS where ID_MES=201801
+
+   --Opcion 2
+with
+	compras (id,importe_compra) as(
+	select 1 as id ,sum(importe_compra) AS IMPORTE
+	from CARREFOUR_COMPRAS where ID_MES=201801)
+	,ventas (id,importe_venta) as(
+	select 1 as id,sum(importe_venta) 
+	from FACT_VENTAS where ID_MES=201801
+	)
+	select 'VENTAS -->' as Tipo,importe_venta,
+		   'COMPRAS -->' as Tipo,importe_compra 
+	from compras inner join ventas on compras.id=ventas.id
+
 --3º Mostrar unidades en almacen (resultado de compras-ventas) del año 2018
+with
+	compras (id,unidades) as(
+	select 1 as id ,sum(unidades) AS IMPORTE
+	from CARREFOUR_COMPRAS where ID_MES between  201801 and 201812)
+	,ventas (id,unidades) as(
+	select 1 as id,sum(unidades) 
+	from FACT_VENTAS where ID_MES between  201801 and 201812
+	)
+	select compras.unidades-ventas.unidades as Diferencia_unidades_2018
+	from compras inner join ventas on compras.id=ventas.id
 --4º Ingresos por mes y tienda del año 2018 (diferencia compra-venta)
+with
+	compras (id_mes,id_tienda,importe_compra) as(
+	select id_mes,id_tienda ,sum(importe_compra)
+	from CARREFOUR_COMPRAS c where ID_MES between  201801 and 201812
+	group by id_mes,ID_TIENDA)
+	,ventas (id_mes,id_tienda ,importe_venta) as(
+	select id_mes,id_tienda ,sum(importe_venta) 
+	from FACT_VENTAS  where ID_MES between  201801 and 201812
+	group by id_mes,ID_TIENDA
+	)
+	select compras.id_mes,lk.NOMBRE_TIENDA,compras.importe_compra-ventas.importe_venta as Ingresos
+	from compras inner join ventas on compras.id_mes=ventas.id_mes and compras.id_tienda=ventas.id_tienda
+	inner join LKP_TIENDAS lk on lk.ID_TIENDA=compras.id_tienda
 --5º Si tenemos en cuenta que cada tienda tiene unos gastos mensuales de 24€
--- cual es la tienda que más pérdidas tiene en el año 2018
---6º En que año y mes hemos obtenido más beneficios
+--   cual es la tienda que más pérdidas tiene en el año 2018
+with
+	compras (id_mes,id_tienda,importe_compra) as(
+	select id_mes,id_tienda ,sum(importe_compra)-24
+	from CARREFOUR_COMPRAS c where ID_MES between  201801 and 201812
+	group by id_mes,ID_TIENDA)
+	,ventas (id_mes,id_tienda ,importe_venta) as(
+	select id_mes,id_tienda ,sum(importe_venta)-24
+	from FACT_VENTAS  where ID_MES between  201801 and 201812
+	group by id_mes,ID_TIENDA
+	)
+	select top 1 compras.id_mes,lk.NOMBRE_TIENDA,compras.importe_compra-ventas.importe_venta as Ingresos
+	from compras inner join ventas on compras.id_mes=ventas.id_mes and compras.id_tienda=ventas.id_tienda
+	inner join LKP_TIENDAS lk on lk.ID_TIENDA=compras.id_tienda
+	order by 3
+--6º En que año y mes hemos obtenido más beneficios. Mostrando el nombre del mes
+with
+	compras (id_mes,importe_compra) as(
+	select id_mes ,sum(importe_compra)
+	from CARREFOUR_COMPRAS c 
+	group by id_mes)
+	,ventas (id_mes ,importe_venta) as(
+	select id_mes ,sum(importe_venta)
+	from FACT_VENTAS  
+	group by id_mes
+	)
+	select datename(Month,cast(cast(compras.id_mes as varchar)+'01' as date)) as Mes,left(cast(compras.id_mes as varchar),4) as Año,compras.importe_compra-ventas.importe_venta as Ingresos
+	from compras inner join ventas on compras.id_mes=ventas.id_mes
+	order by 2
