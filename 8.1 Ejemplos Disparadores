@@ -1,1 +1,23 @@
+CREATE TABLE CARREFOUR.DBO.expedientes (   
+      code             NVARCHAR(15)  NOT NULL,
+      state            NVARCHAR(20)  DEFAULT 'INICIO',
+      stateChangedDate DATETIME,
+      PRIMARY KEY (code)     
+    );   
+
+
+-- Insertamos algunos expedientes de ejemplo
+
+INSERT INTO expedientes (code) VALUES ('exp1');
+INSERT INTO expedientes (code) VALUES ('exp2');
+INSERT INTO expedientes (code) VALUES ('exp3');
+ 
+
+    CREATE TABLE dbo.expStatusHistory (
+      id    INT         IDENTITY,
+      code  VARCHAR(15) NOT NULL,
+      state VARCHAR(20) NOT NULL,
+      date  DATETIME   DEFAULT GetDate(),
+      PRIMARY KEY  (id)
+	);
 
